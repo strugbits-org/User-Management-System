@@ -6,7 +6,8 @@ const User = require("../../models/User");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const authMW = require("../../middleware/authMW");
-// get user
+
+// Get User Details
 router.get("/", authMW, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -35,7 +36,7 @@ router.post(
     const { name, email, password } = req.body;
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ message: errors.array()[0].msg });
     }
 
     try {
@@ -44,7 +45,7 @@ router.post(
       if (existingUser) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "User already exits" }] });
+          .json({ message: "User already exits" });
       } else {
         const newUser = new User({
           name,
@@ -71,7 +72,7 @@ router.post(
             if (err) {
               throw err;
             } else {
-              res.json({ mes: "You have been registered successfully", token });
+              res.json({ message: "You have been registered successfully", token });
             }
           }
         );
@@ -83,6 +84,7 @@ router.post(
   }
 );
 
+// Login
 router.post(
   "/login",
   [
@@ -99,7 +101,7 @@ router.post(
     const { email, password } = req.body;
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ message: errors.array()[0].msg });
     }
 
     try {
@@ -108,14 +110,14 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "Invalid email or password" }] });
+          .json({ message: "Invalid email or password" });
       } else {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
           return res
             .status(400)
-            .json({ errors: [{ msg: "Invalid email or password" }] });
+            .json({ message: "Invalid email or password" });
         }
 
         const payload = {
@@ -132,7 +134,7 @@ router.post(
             if (err) {
               throw err;
             } else {
-              res.json({ mes: "You have been login successfully", token });
+              res.json({ message: "You have been login successfully", token });
             }
           }
         );
