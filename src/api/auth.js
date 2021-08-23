@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-const User = require("../../src/models/User");
+const User = require("../models/User");
 const authMW = require("../../middleware/authMW");
 const {
   register,
   login,
   verifyEmail,
-} = require("../../src/controller/AuthController");
+} = require("../controller/AuthController");
 
 // Get User Details
 router.get("/", authMW, async (req, res) => {
