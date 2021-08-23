@@ -50,7 +50,8 @@ const register = async (req, res) => {
               token,
             });
             await newToken.save();
-            const link = `http://localhost:3000/verify-email?token=${token}`;
+            const link = `http://dccd-2400-adc1-1bd-5500-e9c2-6819-7873-1822.ngrok.io/verify-email?token=${token}`;
+            // const link = `http://localhost:3000/verify-email?token=${token}`;
             sendMail(link, newUser.email);
             res.json({
               message:
