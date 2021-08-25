@@ -39,7 +39,7 @@ const register = async (req, res) => {
       jwt.sign(
         payload,
         config.get("jwtSecret"),
-        { expiresIn: 360000 },
+        { expiresIn: 300 },
         async (err, token) => {
           if (err) {
             throw err;
@@ -49,7 +49,7 @@ const register = async (req, res) => {
               token,
             });
             await newToken.save();
-            const link = `http://dccd-2400-adc1-1bd-5500-e9c2-6819-7873-1822.ngrok.io/verify-email?token=${token}`;
+            const link = `http://2d58-154-192-76-8.ngrok.io/verify-email?token=${token}`;
             // const link = `http://localhost:3000/verify-email?token=${token}`;
             sendMail(link, newUser.email);
             res.json({
@@ -99,7 +99,7 @@ const login = async (req, res) => {
       jwt.sign(
         payload,
         config.get("jwtSecret"),
-        { expiresIn: 360000 },
+        { expiresIn: 300 },
         (err, token) => {
           if (err) {
             throw err;
