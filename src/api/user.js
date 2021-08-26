@@ -7,17 +7,7 @@ const {
   getUserProfile,
   getUserProfileDetails
 } = require("../controller/UserController");
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.user.id + "-" + file.originalname);
-  },
-});
-const upload = multer({ storage: storage });
+const { upload } = require("../shared/Shared");
 
 // Get User Profile Details
 router.get("/", authMW, (req, res) => getUserProfile(req, res));
@@ -42,7 +32,7 @@ router.post(
   (req, res) => updateProfile(req, res)
 );
 
-// get user profile view only
+// get user profile not protected
 router.get("/get-user/:id", (req, res) => getUserProfileDetails(req, res));
 
 module.exports = router;
