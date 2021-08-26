@@ -63,14 +63,24 @@ const updateProfile = async (req, res) => {
       postalCode,
       aboutMe,
       userId: id,
-      userImage: req.file.path,
+      userImage: req.file?.path,
     });
     const exisitingProfile = await UserProfile.findOne({ userId: id });
+
     if (exisitingProfile) {
-      unlink(exisitingProfile.userImage, (err) => {
-        if (err) throw err;
-        console.log("file was deleted");
-      });
+      if (req.file) {
+        unlink(exisitingProfile.userImage, (err) => {
+          if (err) throw err;
+        });
+        await UserProfile.findOneAndUpdate(
+          { _id: exisitingProfile._id },
+          {
+            $set: {
+              userImage: req.file.path,
+            },
+          }
+        );
+      }
       await UserProfile.findOneAndUpdate(
         { _id: exisitingProfile._id },
         {
@@ -83,7 +93,6 @@ const updateProfile = async (req, res) => {
             country: country,
             postalCode: postalCode,
             aboutMe: aboutMe,
-            userImage: req.file.path,
           },
         }
       );

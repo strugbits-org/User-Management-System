@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 const Token = require("../models/Token");
 const sendMail = require("../sendMail/SendMail");
+const frontendURL = require("../shared/Shared");
 
 const register = async (req, res) => {
   const errors = validationResult(req);
@@ -49,8 +50,7 @@ const register = async (req, res) => {
               token,
             });
             await newToken.save();
-            const link = `http://071a-2400-adc1-1bd-5500-9d69-8fbc-b1aa-4147.ngrok.io/verify-email?token=${token}`;
-            // const link = `http://localhost:3000/verify-email?token=${token}`;
+            const link = `${frontendURL}/verify-email?token=${token}`;
             sendMail(link, newUser.email);
             res.json({
               message:
@@ -99,7 +99,7 @@ const login = async (req, res) => {
       jwt.sign(
         payload,
         config.get("jwtSecret"),
-        { expiresIn: 30000 },
+        { expiresIn: 300 },
         (err, token) => {
           if (err) {
             throw err;
