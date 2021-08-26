@@ -8,7 +8,7 @@ const sendMail = require("../sendMail/SendMail");
 
 const register = async (req, res) => {
   const errors = validationResult(req);
-  const { name, email, password } = req.body;
+  const { userName, email, password } = req.body;
 
   if (!errors.isEmpty()) {
     return res.status(400).json({ message: errors.array()[0].msg });
@@ -21,7 +21,7 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "User already exits" });
     } else {
       const newUser = new User({
-        name,
+        userName,
         email,
         password,
       });
@@ -49,7 +49,7 @@ const register = async (req, res) => {
               token,
             });
             await newToken.save();
-            const link = `http://2d58-154-192-76-8.ngrok.io/verify-email?token=${token}`;
+            const link = `http://071a-2400-adc1-1bd-5500-9d69-8fbc-b1aa-4147.ngrok.io/verify-email?token=${token}`;
             // const link = `http://localhost:3000/verify-email?token=${token}`;
             sendMail(link, newUser.email);
             res.json({
@@ -99,7 +99,7 @@ const login = async (req, res) => {
       jwt.sign(
         payload,
         config.get("jwtSecret"),
-        { expiresIn: 300 },
+        { expiresIn: 30000 },
         (err, token) => {
           if (err) {
             throw err;

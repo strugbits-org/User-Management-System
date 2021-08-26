@@ -24,7 +24,7 @@ router.get("/", authMW, async (req, res) => {
 router.post(
   "/register",
   [
-    check("name", "Name is required").not().isEmpty(),
+    check("userName", "User Name is required").not().isEmpty(),
     check("email", "Email is required").not().isEmpty(),
     check("email", "Email is not valid").isEmail(),
     check("password", "Password is required").not().isEmpty(),
