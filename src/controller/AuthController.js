@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 const Token = require("../models/Token");
 const sendMail = require("../sendMail/SendMail");
-const frontendURL = require("../shared/Shared");
+const { frontendURL } = require("../shared/Shared");
 
 const register = async (req, res) => {
   const errors = validationResult(req);

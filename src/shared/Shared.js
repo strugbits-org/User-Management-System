@@ -1,4 +1,4 @@
-const frontendURL = "http://localhost:3000";
+const frontendURL = "https://8519-2400-adc1-1bd-5500-5ced-cc9d-ffce-b404.ngrok.io";
 
 const multer = require("multer");
 
@@ -13,6 +13,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 module.exports = {
-    frontendURL: frontendURL,
+    frontendURL,
     upload: upload,
 };
