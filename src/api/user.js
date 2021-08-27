@@ -7,18 +7,22 @@ const {
   getUserProfile,
   getUserProfileDetails,
   getAllUsers,
+  searchUsers,
+  getUserIdByUserProfileId,
 } = require("../controller/UserController");
 const { upload } = require("../shared/Shared");
 
 // Get User Profile Details
-router.get("/", authMW, (req, res) => getUserProfile(req, res));
+router.get("/user-profile", authMW, (req, res) => getUserProfile(req, res));
 
 // get all users
-router.get("/get-all-users", authMW, (req, res) => getAllUsers(req, res));
+router.get("/user-profile/get-all-users", authMW, (req, res) =>
+  getAllUsers(req, res)
+);
 
 // Update Profile
 router.post(
-  "/update-profile",
+  "/user-profile/update-profile",
   authMW,
   upload.single("userImage"),
   [
@@ -39,6 +43,16 @@ router.post(
 );
 
 // get user profile not protected
-router.get("/get-user/:id", (req, res) => getUserProfileDetails(req, res));
+router.get("/user-profile/get-user/:id", (req, res) =>
+  getUserProfileDetails(req, res)
+);
+
+// search user
+router.post("/search-users", authMW, (req, res) => searchUsers(req, res));
+
+// Get User by user profile id
+router.get("/get-user-by-user-profile-id/:id", (req, res) =>
+  getUserIdByUserProfileId(req, res)
+);
 
 module.exports = router;

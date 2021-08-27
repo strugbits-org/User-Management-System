@@ -99,7 +99,7 @@ const login = async (req, res) => {
       jwt.sign(
         payload,
         config.get("jwtSecret"),
-        { expiresIn: 300 },
+        { expiresIn: 300000 },
         (err, token) => {
           if (err) {
             throw err;
@@ -135,7 +135,7 @@ const verifyEmail = async (req, res) => {
 };
 
 module.exports = {
-  register: register,
-  login: login,
-  verifyEmail: verifyEmail,
+  register,
+  login,
+  verifyEmail,
 };

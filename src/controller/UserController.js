@@ -128,6 +128,7 @@ const updateProfile = async (req, res) => {
 };
 
 const getUserProfileDetails = async (req, res) => {
+  
   try {
     const user = await User.findById(req.params.id).select("-password");
     const userProfile = await UserProfile.findOne({ userId: user._id });
@@ -161,7 +162,9 @@ const getUserProfileDetails = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await UserProfile.find({ userId: { $ne: req.user.id } })
+    const users = await UserProfile.find({
+      userId: { $ne: req.user.id },
+    }).select("university userImage firstName lastName country");
     res.json(users);
   } catch (err) {
     console.error(err.message);
@@ -169,9 +172,108 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const searchUsers = async (req, res) => {
+  const { name, university, country } = req.body;
+  let getFilterUsers = [];
+
+  try {
+    if (university && name && country) {
+      getFilterUsers = await UserProfile.find({
+        userId: { $ne: req.user.id },
+        university: { $regex: new RegExp(req.body.university, "i") },
+        country: req.body.country,
+        firstName: { $regex: new RegExp(req.body.name, "i") },
+      }).select("university userImage firstName lastName country");
+      if (getFilterUsers.length === 0) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          university: { $regex: new RegExp(req.body.university, "i") },
+          country: req.body.country,
+          lastName: { $regex: new RegExp(req.body.name, "i") },
+        }).select("university userImage firstName lastName country");
+      }
+    } else if (university && country) {
+      getFilterUsers = await UserProfile.find({
+        userId: { $ne: req.user.id },
+        university: { $regex: new RegExp(req.body.university, "i") },
+        country: req.body.country,
+      }).select("university userImage firstName lastName country");
+    } else if (name && university) {
+      getFilterUsers = await UserProfile.find({
+        userId: { $ne: req.user.id },
+        university: { $regex: new RegExp(req.body.university, "i") },
+        firstName: { $regex: new RegExp(req.body.name, "i") },
+      }).select("university userImage firstName lastName country");
+      if (getFilterUsers.length === 0) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          university: { $regex: new RegExp(req.body.university, "i") },
+          lastName: { $regex: new RegExp(req.body.name, "i") },
+        }).select("university userImage firstName lastName country");
+      }
+    } else if (name && country) {
+      getFilterUsers = await UserProfile.find({
+        userId: { $ne: req.user.id },
+        country: req.body.country,
+        firstName: { $regex: new RegExp(req.body.name, "i") },
+      }).select("university userImage firstName lastName country");
+      if (getFilterUsers.length === 0) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          country: req.body.country,
+          lastName: { $regex: new RegExp(req.body.name, "i") },
+        }).select("university userImage firstName lastName country");
+      }
+    } else if (name || university || country) {
+      if (name) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          firstName: { $regex: new RegExp(req.body.name, "i") },
+        }).select("university userImage firstName lastName country");
+        if (getFilterUsers.length === 0) {
+          getFilterUsers = await UserProfile.find({
+            userId: { $ne: req.user.id },
+            lastName: { $regex: new RegExp(req.body.name, "i") },
+          }).select("university userImage firstName lastName country");
+        }
+      } else if (university) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          university: { $regex: new RegExp(req.body.university, "i") },
+        }).select("university userImage firstName lastName country");
+      } else {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          country: req.body.country,
+        }).select("university userImage firstName lastName country");
+      }
+    } else {
+      getFilterUsers = [];
+    }
+
+    res.json(getFilterUsers);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+const getUserIdByUserProfileId = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = await UserProfile.findById(id).select("userId");
+    res.json(user.userId);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
+
 module.exports = {
-  updateProfile: updateProfile,
-  getUserProfile: getUserProfile,
-  getUserProfileDetails: getUserProfileDetails,
-  getAllUsers: getAllUsers,
+  updateProfile,
+  getUserProfile,
+  getUserProfileDetails,
+  getAllUsers,
+  searchUsers,
+  getUserIdByUserProfileId,
 };
