@@ -38,6 +38,14 @@ const UserProfileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  university: {
+    type: String,
+    required: true,
+  },
+  employment: {
+    type: String,
+    required: true,
+  },
   userImage: {
     type: String,
     required: true,

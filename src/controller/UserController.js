@@ -19,6 +19,8 @@ const getUserProfile = async (req, res) => {
         country: userProfile.country,
         postalCode: userProfile.postalCode,
         aboutMe: userProfile.aboutMe,
+        employment: userProfile.employment,
+        university: userProfile.university,
         userImage: userProfile.userImage,
       };
     } else {
@@ -45,6 +47,8 @@ const updateProfile = async (req, res) => {
     country,
     postalCode,
     aboutMe,
+    university,
+    employment,
     id,
   } = req.body;
 
@@ -62,6 +66,8 @@ const updateProfile = async (req, res) => {
       country,
       postalCode,
       aboutMe,
+      university,
+      employment,
       userId: id,
       userImage: req.file?.path,
     });
@@ -93,6 +99,8 @@ const updateProfile = async (req, res) => {
             country: country,
             postalCode: postalCode,
             aboutMe: aboutMe,
+            university: university,
+            employment: employment,
           },
         }
       );
@@ -135,6 +143,8 @@ const getUserProfileDetails = async (req, res) => {
         country: userProfile.country,
         postalCode: userProfile.postalCode,
         aboutMe: userProfile.aboutMe,
+        university: userProfile.userProfile,
+        employment: userProfile.employment,
         userImage: userProfile.userImage,
       };
     } else {
@@ -149,8 +159,19 @@ const getUserProfileDetails = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await UserProfile.find({ userId: { $ne: req.user.id } })
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
+
 module.exports = {
   updateProfile: updateProfile,
   getUserProfile: getUserProfile,
   getUserProfileDetails: getUserProfileDetails,
+  getAllUsers: getAllUsers,
 };

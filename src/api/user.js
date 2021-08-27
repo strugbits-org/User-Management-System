@@ -5,12 +5,16 @@ const authMW = require("../../middleware/authMW");
 const {
   updateProfile,
   getUserProfile,
-  getUserProfileDetails
+  getUserProfileDetails,
+  getAllUsers,
 } = require("../controller/UserController");
 const { upload } = require("../shared/Shared");
 
 // Get User Profile Details
 router.get("/", authMW, (req, res) => getUserProfile(req, res));
+
+// get all users
+router.get("/get-all-users", authMW, (req, res) => getAllUsers(req, res));
 
 // Update Profile
 router.post(
@@ -28,6 +32,8 @@ router.post(
     check("country", "Country is required").not().isEmpty(),
     check("postalCode", "Postal Code is required").not().isEmpty(),
     check("aboutMe", "About Me is required").not().isEmpty(),
+    check("university", "University is required").not().isEmpty(),
+    check("employment", "Employment is required").not().isEmpty(),
   ],
   (req, res) => updateProfile(req, res)
 );
