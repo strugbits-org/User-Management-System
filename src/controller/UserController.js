@@ -57,6 +57,17 @@ const updateProfile = async (req, res) => {
   }
 
   try {
+    const existingUserName = await User.findOne({
+      userName: { $regex: new RegExp(userName, "i") },
+    });
+    if (existingUserName) {
+      if (existingUserName.id !== id) {
+        return res
+          .status(400)
+          .json({ message: "Someone already has that user name" });
+      }
+    }
+
     const userProfile = new UserProfile({
       email,
       firstName,
@@ -128,7 +139,6 @@ const updateProfile = async (req, res) => {
 };
 
 const getUserProfileDetails = async (req, res) => {
-  
   try {
     const user = await User.findById(req.params.id).select("-password");
     const userProfile = await UserProfile.findOne({ userId: user._id });
@@ -176,14 +186,26 @@ const searchUsers = async (req, res) => {
   const { name, university, country } = req.body;
   let getFilterUsers = [];
 
+  const splitName = name?.split(" ");
+
   try {
     if (university && name && country) {
       getFilterUsers = await UserProfile.find({
         userId: { $ne: req.user.id },
         university: { $regex: new RegExp(req.body.university, "i") },
         country: req.body.country,
-        firstName: { $regex: new RegExp(req.body.name, "i") },
+        firstName: { $regex: new RegExp(splitName[0], "i") },
+        lastName: { $regex: new RegExp(splitName[1], "i") },
       }).select("university userImage firstName lastName country");
+
+      if (getFilterUsers.length === 0) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          university: { $regex: new RegExp(req.body.university, "i") },
+          country: req.body.country,
+          firstName: { $regex: new RegExp(req.body.name, "i") },
+        }).select("university userImage firstName lastName country");
+      }
       if (getFilterUsers.length === 0) {
         getFilterUsers = await UserProfile.find({
           userId: { $ne: req.user.id },
@@ -202,8 +224,16 @@ const searchUsers = async (req, res) => {
       getFilterUsers = await UserProfile.find({
         userId: { $ne: req.user.id },
         university: { $regex: new RegExp(req.body.university, "i") },
-        firstName: { $regex: new RegExp(req.body.name, "i") },
+        firstName: { $regex: new RegExp(splitName[0], "i") },
+        lastName: { $regex: new RegExp(splitName[1], "i") },
       }).select("university userImage firstName lastName country");
+      if (getFilterUsers.length === 0) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          university: { $regex: new RegExp(req.body.university, "i") },
+          firstName: { $regex: new RegExp(req.body.name, "i") },
+        }).select("university userImage firstName lastName country");
+      }
       if (getFilterUsers.length === 0) {
         getFilterUsers = await UserProfile.find({
           userId: { $ne: req.user.id },
@@ -215,8 +245,16 @@ const searchUsers = async (req, res) => {
       getFilterUsers = await UserProfile.find({
         userId: { $ne: req.user.id },
         country: req.body.country,
-        firstName: { $regex: new RegExp(req.body.name, "i") },
+        firstName: { $regex: new RegExp(splitName[0], "i") },
+        lastName: { $regex: new RegExp(splitName[1], "i") },
       }).select("university userImage firstName lastName country");
+      if (getFilterUsers.length === 0) {
+        getFilterUsers = await UserProfile.find({
+          userId: { $ne: req.user.id },
+          country: req.body.country,
+          firstName: { $regex: new RegExp(req.body.name, "i") },
+        }).select("university userImage firstName lastName country");
+      }
       if (getFilterUsers.length === 0) {
         getFilterUsers = await UserProfile.find({
           userId: { $ne: req.user.id },
@@ -228,8 +266,15 @@ const searchUsers = async (req, res) => {
       if (name) {
         getFilterUsers = await UserProfile.find({
           userId: { $ne: req.user.id },
-          firstName: { $regex: new RegExp(req.body.name, "i") },
+          firstName: { $regex: new RegExp(splitName[0], "i") },
+          lastName: { $regex: new RegExp(splitName[1], "i") },
         }).select("university userImage firstName lastName country");
+        if (getFilterUsers.length === 0) {
+          getFilterUsers = await UserProfile.find({
+            userId: { $ne: req.user.id },
+            firstName: { $regex: new RegExp(req.body.name, "i") },
+          }).select("university userImage firstName lastName country");
+        }
         if (getFilterUsers.length === 0) {
           getFilterUsers = await UserProfile.find({
             userId: { $ne: req.user.id },

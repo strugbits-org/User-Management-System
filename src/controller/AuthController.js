@@ -16,10 +16,23 @@ const register = async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingEmail = await User.findOne({
+      email: { $regex: new RegExp(email, "i") },
+    });
+    const existingUserName = await User.findOne({
+      userName: { $regex: new RegExp(userName, "i") },
+    });
 
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exits" });
+    if (existingUserName) {
+      return res
+        .status(400)
+        .json({ message: "Someone already has that user name" });
+    }
+
+    if (existingEmail) {
+      return res
+        .status(400)
+        .json({ message: "User with this email already exits" });
     } else {
       const newUser = new User({
         userName,
@@ -99,7 +112,7 @@ const login = async (req, res) => {
       jwt.sign(
         payload,
         config.get("jwtSecret"),
-        { expiresIn: 300000 },
+        { expiresIn: 30000 },
         (err, token) => {
           if (err) {
             throw err;
