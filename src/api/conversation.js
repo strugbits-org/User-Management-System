@@ -8,8 +8,20 @@ router.post("/", async (req, res) => {
   });
 
   try {
-    const savedConversation = await newConversation.save();
-    res.status(200).json(savedConversation);
+    const existingReceiver = await Conversation.find({
+      members: req.body.receiverId,
+    });
+
+    const [existingConvo] = existingReceiver.map((v) =>
+      v.members.find((c) => c === req.body.senderId)
+    );
+
+    if (existingConvo) {
+      res.status(200).json("Success");
+    } else {
+      const savedConversation = await newConversation.save();
+      res.status(200).json(savedConversation);
+    }
   } catch (err) {
     res.status(500).json(err);
   }
@@ -34,7 +46,7 @@ router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
     const conversation = await Conversation.findOne({
       members: { $all: [req.params.firstUserId, req.params.secondUserId] },
     });
-    res.status(200).json(conversation)
+    res.status(200).json(conversation);
   } catch (err) {
     res.status(500).json(err);
   }

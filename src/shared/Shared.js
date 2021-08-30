@@ -1,4 +1,4 @@
-const frontendURL = "https://7ad7-2400-adc1-1bd-5500-1813-1f8e-bf7e-6d31.ngrok.io";
+const frontendURL = "https://cf05-2400-adc1-41a-1000-6185-8f5-38b5-182b.ngrok.io";
 
 const multer = require("multer");
 
