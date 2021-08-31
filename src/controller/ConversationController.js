@@ -9,10 +9,10 @@ const addNewConversation = async (req, res) => {
     const existingReceiver = await Conversation.find({
       members: req.body.receiverId,
     });
-
-    const [existingConvo] = existingReceiver.map((v) =>
-      v.members.find((c) => c === req.body.senderId)
-    );
+    let existingConvo = [];
+    existingReceiver.map((v) => {
+      existingConvo = v.members.find((c) => c === req.body.senderId);
+    });
 
     if (existingConvo) {
       res.status(200).json("Success");
